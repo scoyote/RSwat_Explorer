@@ -19,7 +19,12 @@ options(cas.gen.function.sig=TRUE)
 
 airline2008_h <- cas.read.csv(session, "~/2008.csv", tablename="Air2008", replace=TRUE)
 cas.table.promote(session,table="AIR2008")
+
+cas.table.columnInfo(session,table ="AIR2008" )
 # This makes it possible to go into Visual Data Builder to do transformations if desired
+#TODO Open Data Builder, go to Column Profile and change Cancelled Data Type to Character and format to $1. then Save the table!!!
+#TODO ADD column ceil(depdelay/1000)
+cas.table.columnInfo(session,table ="AIR2008" )
 
 # load the cas table into local R = not always a good idea:)
 airlocal_df <- to.casDataFrame(airline2008_h)
@@ -84,7 +89,7 @@ target   = "Cancelled"
 
 nominals = c("UniqueCarrier", "Origin", "Dest")
 
-inputs   = c("Distance","ArrDelay","DepDelay","UniqueCarrier", "Origin", "Dest")
+inputs   = c("UniqueCarrier", "Origin", "Dest","DayOfWeek","Month")
 
 
 # Load the decsion tree actionset
@@ -118,7 +123,7 @@ results <- cas.percentile.assess(session,
 )
 
 # View the 50% cutoff rate
-results$ROCInfo[results$ROCInfo$CutOff==0.5, 
+results$ROCInfo[results$ROCInfo$CutOff==0.26, 
                 c('CutOff', 'TP','FP','FN','TN')]
 
 # Plot the ROC curve
