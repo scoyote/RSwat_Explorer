@@ -33,6 +33,8 @@ res <- cas.builtins.serverStatus(session)
 #This returns an R list object that can be queried in the normal R way
 res$server
 
+
+
 # Local vs Remote Execution
 data(mtcars)
 object.size(mtcars)
@@ -41,7 +43,7 @@ mtcars_cas <- as.casTable(session, mtcars)
 object.size(mtcars_cas)
 
 #Load a file from remote filesystem to cas
-cas.table.loadTable(session,path=largestFileName,caslib="DemoData")
+cas.table.loadTable(session,path='cardata.sas7bdat',caslib="DemoData")
 
 tables <- unnest(data.frame(cas.table.tableInfo(session,caslib='DemoData')))
 
