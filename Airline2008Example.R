@@ -16,15 +16,37 @@ cas.sessionProp.setSessOpt(session,caslib='DemoData')
 options(cas.gen.function.sig=TRUE)
 
 #upload the csv into CAS in-memory table directly
-
 airline2008_h <- cas.read.csv(session, "~/2008.csv", tablename="Air2008", replace=TRUE)
 cas.table.promote(session,table="AIR2008")
 
+airline2008_h@computedVars = 'ArrDelay_x'
+airline2008_h@computedVarsProgram = "ArrDelay_X = 'ArrDelay'n"
+colnames(airline2008_h)
+head(airline2008_h)
+
+##CAS action way
 cas.table.columnInfo(session,table ="AIR2008" )
+
+cas.table.save(session,table ="AIR2008",name="AIR2008b",replace = TRUE)
+cas.table.dropTable(session,name="AIR2008")
+
+cas.table.fileInfo(session,caslib = "DemoData")
+cas.table.loadTable(session,path='AIR2008b.sashdat',caslib="DemoData")
+airline2008_b <- defCasTable(session,tablename = "AIR2008b",caslib = "DemoData")
+##CAS Table handle way
+colnames(airline2008_b)
 # This makes it possible to go into Visual Data Builder to do transformations if desired
 #TODO Open Data Builder, go to Column Profile and change Cancelled Data Type to Character and format to $1. then Save the table!!!
 #TODO ADD column ceil(depdelay/1000)
+
+
+
+#A delay is defined as 15 or more minutes after
+
+##CAS action way
 cas.table.columnInfo(session,table ="AIR2008" )
+##CAS Table handle way
+colnames(airline2008_h)
 
 # load the cas table into local R = not always a good idea:)
 airlocal_df <- to.casDataFrame(airline2008_h)
@@ -50,7 +72,20 @@ cas.table.columnInfo(session,table ="AIR2008" )
 
 cas.simple.distinct(airline2008_h)$Distinct[,c('Column', 'NMiss')]
 
+airline2008_h$ArrDelay
 
+airline2008_h['newvar'] <- airline2008_h['ArrDelay']
+
+airline2008_h@computedVars = c('pratio')
+airline2008_h@computedVarsProgram <- "pratio = 'ArrDelay'n;"
+
+newair <- as.casTable(session,airline2008_h,casOut=list(name="AIR2008b", replace=TRUE))
+
+colnames(airline2008_h)
+cas.table.columnInfo(session,table ="AIR2008" )
+
+summary(airline2008_h$pratio)
+cas.simple.summary(session,table="AIR2008")
 # Load the sampling actionset
 loadActionSet(session, 'sampling')
 
